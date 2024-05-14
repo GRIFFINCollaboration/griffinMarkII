@@ -50,7 +50,8 @@
                     'DS': 'DESCANT',
                     'PA': 'PACES', 
 	            'LB': 'LaBr3',
-	            'OG': 'OGS',
+                'OG': 'OGS',
+                'RC': 'RCMP',
 	            'XX': 'Empty CSA',
 	            'TI': 'TIGRESS',
 	            'SI': 'Silicon', 
@@ -124,6 +125,23 @@
 
                     }
                 );
+
+                // Inject the buttons to switch between DAQ subpages (Digitzers and Collectors)
+
+        // Create menu buttons
+        var wrap = document.getElementById('daq-subpage-controls');
+    for(i=0; i<buttonNames.length; i++){
+                newButton = document.createElement('a'); 
+                newButton.setAttribute('id', buttonIDs[i]); 
+                newButton.setAttribute('class', 'btn btn-info btn-lg');
+                newButton.innerHTML = buttonNames[i];
+                newButton.onclick = function(){
+                   menuButtonClick(this.id);
+                }.bind(newButton);
+                wrap.appendChild(newButton);
+      }
+      // Start with the Digitizers subpgae displayed
+      document.getElementById(buttonIDs[1]).click();
                  
 	        if(dataStore.hostname=='tigress'){ document.getElementById('Logo').src = 'img/TIGRESS-logo.png';}
 

@@ -67,6 +67,10 @@ select, input, option, .dark-text{
     margin-right: 1em;
 }
 
+.hidden{
+    display: none;
+}
+
 .modal-body, .modal-header, .modal-footer{
     color: #000000;
 }

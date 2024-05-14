@@ -80,6 +80,7 @@ dataStore = {
         'GRS': 'GRIFFIN Shield',
         'OGS': 'Organic Glass Scintillator',
         'PAC': 'PACES',
+        'RCS': 'RCMP',
         'SEP': 'SCEPTAR',
         'SHQ': 'SHARC Quad',
         'SHB': 'SHARC Box',
@@ -170,6 +171,18 @@ dataStore = {
             "short": 'DSCn',
             "full": 'DESCANT (neutron)',
             "description": 'DSCn pulse shape'
+        },
+        {
+            "id": '12',
+            "short": 'RCSp',
+            "full": 'RCMP DSSD (p)',
+            "description": 'RCMP Si Strip p'
+        },
+        {
+            "id": '13',
+            "short": 'RCSn',
+            "full": 'RCMP DSSD (n)',
+            "description": 'RCMP Si Strip n'
         }
 	],
 	"tigress": [

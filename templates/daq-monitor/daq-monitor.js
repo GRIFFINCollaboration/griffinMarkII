@@ -41,6 +41,12 @@ var HistoBufferUsageTitles = ["0-25%", "25-50%", "50-75%", "75-100%"];
 var MaxValue = 500000000000; // Equal to maximum number of events per second for the link
 var MaxInputLinkValue = 500000000000; // Equal to maximum number of events per second for the input link. However, is this dependent on the size of events being transmitted?
 
+var subpageWrappers = ['daq-collectors-wrapper', 'daq-digitizers-wrapper'];
+var subpageMessageText = ['Information on this page is generated in the GRIF-C modules and updated once every 10 seconds.',
+                          'Information on this page is generated in the GRIF-16 modules and updated once per second.'];
+var buttonIDs = ['daqButtonCol', 'daqButtonDig'];
+var buttonNames = ['Collectors', 'Digitizers'];
+
 ////////////////////////////////
 // data unpacking & routing
 ////////////////////////////////
@@ -667,6 +673,7 @@ function repaint(){
     LinkString = "<a href=\"http://" + ADC + "\" target=\"_blank\">" + ADC + "</a>";
     document.getElementById("digitizerLink").innerHTML = LinkString;
 
+if(dataStore.ODB.DAQ){
     //Digitizers plot
     createBarchart(
         'channelsHisto', 
@@ -684,7 +691,7 @@ function repaint(){
         dataStore.ODB.DAQ.summary.detectors.accepts, 
         'Detector Channels', 'Channel', 'Hz'
     );
-
+}
     
     // Filter Display
     // Here add in the extra Det Types to the datastore
@@ -700,8 +707,9 @@ function repaint(){
 //    currently for the filter status - there are 52 words in 4 blocks of data
 //   3 blocks of 16 * 32bits for filter-input, after-time-order, filter-output - these are event counts for each detector type (as before).
 //   1 block of 4 * 32bits for two 4bin*16bit histograms for the time-order buffer usage, followed by filter input buffer usage. i.e. each word is two 16bit histogram bins, and each pair of words is:
-//   bin2bin1 bin4bin3
+//   bin3bin1 bin4bin2
 //   the 4 bins are bin1:0-25% full, bin2:25-50%, bin3:50-75%, bin4:75-100% 
+    // Memory buffers are expected to be mostly empty, otherwise they would be dropping and losing data.
     // The 16 32bits for each Buffer are the rates for each Det Type (including CLOV, SUPN, SCLR)
     //
     // Put the rates numbers into the Filter DataStore
@@ -726,8 +734,8 @@ function repaint(){
 		    }
 		    // The next to last two words are the Histrogram of Buffer Usage for the Time-Ordering buffer
 		    FilterObjectdataStore.FilterElementInfo[k].HistoBufferUsage[0] =  (dataStore.GRIFC.filter_status[dataStore.GRIFC.filter_status.length-4] & 0x0000FFFF);
-		    FilterObjectdataStore.FilterElementInfo[k].HistoBufferUsage[1] = ((dataStore.GRIFC.filter_status[dataStore.GRIFC.filter_status.length-4] & 0xFFFF0000) >> 16);
-		    FilterObjectdataStore.FilterElementInfo[k].HistoBufferUsage[2] =  (dataStore.GRIFC.filter_status[dataStore.GRIFC.filter_status.length-3] & 0x0000FFFF);
+            FilterObjectdataStore.FilterElementInfo[k].HistoBufferUsage[1] =  (dataStore.GRIFC.filter_status[dataStore.GRIFC.filter_status.length-3] & 0x0000FFFF);
+		    FilterObjectdataStore.FilterElementInfo[k].HistoBufferUsage[2] = ((dataStore.GRIFC.filter_status[dataStore.GRIFC.filter_status.length-4] & 0xFFFF0000) >> 16);
 		    FilterObjectdataStore.FilterElementInfo[k].HistoBufferUsage[3] = ((dataStore.GRIFC.filter_status[dataStore.GRIFC.filter_status.length-3] & 0xFFFF0000) >> 16);
 		}else if(FilterObjectdataStore.FilterElementInfo[k].ID == 'FilterBufferInput'){
 		    // The first 16 entries are for the rates for the Input buffer
@@ -737,8 +745,8 @@ function repaint(){
 		    }
 		    // The last two words are the Histrogram of Buffer Usage for the Input buffer
 		    FilterObjectdataStore.FilterElementInfo[k].HistoBufferUsage[0] =  (dataStore.GRIFC.filter_status[dataStore.GRIFC.filter_status.length-2] & 0x0000FFFF);
-		    FilterObjectdataStore.FilterElementInfo[k].HistoBufferUsage[1] = ((dataStore.GRIFC.filter_status[dataStore.GRIFC.filter_status.length-2] & 0xFFFF0000) >> 16);
-		    FilterObjectdataStore.FilterElementInfo[k].HistoBufferUsage[2] =  (dataStore.GRIFC.filter_status[dataStore.GRIFC.filter_status.length-1] & 0x0000FFFF);
+            FilterObjectdataStore.FilterElementInfo[k].HistoBufferUsage[1] =  (dataStore.GRIFC.filter_status[dataStore.GRIFC.filter_status.length-1] & 0x0000FFFF);
+		    FilterObjectdataStore.FilterElementInfo[k].HistoBufferUsage[2] = ((dataStore.GRIFC.filter_status[dataStore.GRIFC.filter_status.length-2] & 0xFFFF0000) >> 16);
 		    FilterObjectdataStore.FilterElementInfo[k].HistoBufferUsage[3] = ((dataStore.GRIFC.filter_status[dataStore.GRIFC.filter_status.length-1] & 0xFFFF0000) >> 16);
 		}
 		else{
@@ -754,10 +762,20 @@ function repaint(){
     }
 
     // Grab and unpack to current Link status information
-    //   The link_statusM, is 5 words per link (80 total)
-    //  word1:   event count
-    //  word2-3: 4bin link usage histogram
-    //   word4-5: 4bin link event buffer usage histogram
+//    The link status odb entries each contain a block of 12 words per link[16 of] for 192 words total, the 12 words are ...
+//
+//0:event_count  - events sent out of the link receive buffer
+//1:link_usage[hi] 2:link_usage[lo] - link idle histogram
+//3:buf_usage[hi]  4:buf_usage[lo]  - link buffer use histogram
+//5:good fragment count - received on the link
+//6:frag_late           -
+//7:frag:err            - format error in event-fragment
+//8:ev_pkts 9:ptr_pkts 10:par_pkts     [packets are 64bits]
+//11:link_errors                      [per clock]
+//
+//NOTE each of words 1-4 contain a pair of 16bit values
+//
+//late => event received on grifc more than 160us after being produced
     FilterInputLinkRate = [];
     FilterInputLinkUsage = [];
     FilterInputBufferUsage = [];
@@ -1240,7 +1258,32 @@ function updateDigitizerList(digiSelectID){
     }
 }
 
+////////////////////////////////
+// Subpage controls
+////////////////////////////////
 
+
+function menuButtonClick(thisID){
+
+    // set default state to all buttons
+    for(i=0; i<buttonIDs.length; i++){
+       document.getElementById(buttonIDs[i]).setAttribute('class', 'btn btn-default btn-lg');
+    }
+
+    //set selected button active state
+    document.getElementById(thisID).classList.add('btn-warning');
+
+    // Hide all pages
+    for(i=0; i<buttonIDs.length; i++){
+    document.getElementById(subpageWrappers[i]).classList.add('hidden');
+     if(buttonIDs[i] == thisID){
+        // unhide the one we want and display the message text
+       document.getElementById(subpageWrappers[i]).classList.remove('hidden');
+       document.getElementById('daqMessageDiv').innerHTML = subpageMessageText[i];
+     }
+    }
+
+}
 
 
 
