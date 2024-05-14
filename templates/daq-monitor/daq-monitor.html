@@ -29,8 +29,8 @@
     <div class='section-wrapper'>
         <div class='col-md-12 pan' id='collectorsWrap'>
             <h2>Secondary Collectors</h2>
-            <label for='collectorPicker'>Collector: </label>
-            <div id='collectorPicker' class="btn-group" role="group"></div>
+            <label for='collectorPickerDig'>Collector: </label>
+            <div id='collectorPickerDig' class="btn-group" role="group"></div>
             <div id='digitizersHisto'></div>
         </div>
     </div>
@@ -38,8 +38,8 @@
     <div class='section-wrapper'>
         <div class='col-md-12 pan'>
             <h2>Digitizers</h2>
-            <label for='digiCollectorPicker'>Collector: </label>
-            <div id='digiCollectorPicker' class="btn-group" role="group"></div><br>
+            <label for='digiCollectorPickerDig'>Collector: </label>
+            <div id='digiCollectorPickerDig' class="btn-group" role="group"></div><br>
             <label for='digitizerPicker'>Digitizer: </label>
             <div id='digitizerPicker' class="btn-group" role="group"></div><br>
 	    <label for='digitizerLink'>Link to Status page:</label>
@@ -48,6 +48,14 @@
         </div>
     </div>
 
+    <div class='section-wrapper'>
+        <div class='col-md-12 pan' id='ADCLinksWrap'>
+            <h2>ADC Webpage Links</h2>
+            <label for='CollectorChanADCLinks'>Secondaries: </label>
+            <div id='CollectorChanADCLinks' class="btn-group" role="group"></div>
+        </div>
+    </div>
+    
     </div>
 
     <div class='section-wrapper hidden' id='daq-collectors-wrapper'>
@@ -66,9 +74,20 @@
         <div class='col-md-12 pan' id='masterStats'>
             <h2>Filter Stats</h2>
             <div id='FilterDisplay' class='FilterFrame'></div>
-	    <div id='FilterHistoFrame' class='FilterFrame' text-align='left'>
-	        <div id='FilterTable'></div>
-	        <div id='FilterHisto'></div>
+        <div id='FilterHistoFrame' class='FilterFrame' text-align='left'>
+            <div id='FilterTable'></div>
+            <div id='FilterHisto'></div>
+            </div>
+        </div>
+    </div>
+
+    <div class='section-wrapper'>
+        <div class='col-md-12 pan' id='collectorStats'>
+            <h2>Collector Links</h2>
+            <label for='collectorPickerCol'>Collector: </label>
+            <div id='collectorPickerCol' class="btn-group" role="group"></div>
+            <div id='collectorsHisto'></div>
+            <div id='coolectorsTable'></div>
             </div>
         </div>
     </div>

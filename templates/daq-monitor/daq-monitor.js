@@ -198,29 +198,29 @@ function regenerateDatastructure(suppressDOMconfig){
                 collectorOption.setAttribute('class', 'btn btn-default');
                 collectorOption.setAttribute('value', dataStore.ODB.DAQ.summary.collectors.titles[i].slice(2,3));
                 collectorOption.onclick = function(){
-                    activeButton('collectorPicker', this);
+                    activeButton('collectorPickerDig', this);
                     dataStore.collectorValue = this.value
                     repaint();
                 }.bind(collectorOption);
                 collectorOption.innerHTML = dataStore.ODB.DAQ.summary.collectors.titles[i];
-                document.getElementById('collectorPicker').appendChild(collectorOption);
+                document.getElementById('collectorPickerDig').appendChild(collectorOption);
 
                 digiCollectorOption = collectorOption.cloneNode(true);
                 digiCollectorOption.onclick = function(){
-                    activeButton('digiCollectorPicker', this);
+                    activeButton('digiCollectorPickerDig', this);
                     dataStore.digiCollectorValue = this.value;
-                    updateDigitizerList("digiCollectorPicker"); 
+                    updateDigitizerList("digiCollectorPickerDig"); 
                     repaint();
                 }.bind(digiCollectorOption);
-                document.getElementById('digiCollectorPicker').appendChild(digiCollectorOption);
+                document.getElementById('digiCollectorPickerDig').appendChild(digiCollectorOption);
 
                 //start with the first collector selected on both collector and digitizer plots
                 if(first){
                     dataStore.collectorValue = collectorOption.value;
                     dataStore.digiCollectorValue = collectorOption.value;
-                    updateDigitizerList("digiCollectorPicker"); 
-                    activeButton('collectorPicker', collectorOption);
-                    activeButton('digiCollectorPicker', digiCollectorOption);
+                    updateDigitizerList("digiCollectorPickerDig"); 
+                    activeButton('collectorPickerDig', collectorOption);
+                    activeButton('digiCollectorPickerDig', digiCollectorOption);
                     first = false;
                 }
 
@@ -247,9 +247,41 @@ function regenerateDatastructure(suppressDOMconfig){
 		}
 		SetAllChanMaskButtons(i+1,dataStore.ODB.DAQ.params.ChanMask[i+1]);
 		}
+
+
+        // Create the Digitizer Links buttons
+        if(i<8){
+                CollectorADCLinksRow = document.createElement('div');
+        name = 'CollectorADCLinksRow'+i;
+                CollectorADCLinksRow.setAttribute('id', name);
+                CollectorADCLinksRow.innerHTML = 'Collector'+(i)+': ';
+                document.getElementById('CollectorChanADCLinks').appendChild(CollectorADCLinksRow);
+        for(j=0; j<16; j++){
+                ADCLinksButton = document.createElement('button');
+                string = 'ADCLinksButton'+(i+1)+'-'+j;
+                ADCLinksButton.setAttribute('id', string);
+                ADCLinksButton.setAttribute('type', 'button');
+                ADCLinksButton.setAttribute('class', 'btn btn-default');
+                ADCLinksButton.style = 'font-size:10px';
+                ADCLinksButton.style.padding = '4px';
+                thisCol = 'collector0x'+i;
+                ADC='empty';
+        if(dataStore.ODB.DAQ.hosts[thisCol].digitizers[j] && dataStore.ODB.DAQ.hosts[thisCol].digitizers[j].length>0){ ADC = 'adc'+dataStore.ODB.DAQ.hosts[thisCol].digitizers[j].match(/\d+/)[0]; }
+                //ADC = findADC(findChannelName('0x'+(i)+j+'--'));
+                //if(ADC != null){ ADC = ADC.split('.')[0].split('grif')[1]; }else{ ADC = ''; }
+                ADCLinksButton.innerHTML = '0x'+(i)+j+'<br>'+ADC;
+                ADCLinksButton.value = ADC;
+                ADCLinksButton.onclick = function(){
+        if(this.value == 'empty'){ return; }
+        url = 'http://grif' + this.value + '.triumf.ca';
+                window.open(url, '_blank');
+                }.bind(ADCLinksButton);
+                document.getElementById(name).appendChild(ADCLinksButton);
+        }
+        }
             }
         }
-        updateDigitizerList("digiCollectorPicker");
+        updateDigitizerList("digiCollectorPickerDig");
 
 	/////////////////////////////////////
 	// Create all Filter Display objects
