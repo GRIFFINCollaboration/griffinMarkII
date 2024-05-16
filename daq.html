@@ -25,6 +25,7 @@
         <link id='nav-bar' rel="import" href="templates/nav-bar/nav-bar.html">
         <link id='run-status' rel="import" href="templates/run-status/run-status.html">
         <link id='daq-monitor' rel="import" href="templates/daq-monitor/daq-monitor.html">
+        <link id='CollectorLinksReportTable' rel="import" href="templates/daq-monitor/daq-monitor-ColLinkTable.html">
     </head>
 
     <body>
@@ -85,7 +86,7 @@
                 ///////////////////////////
                 //handle templates
                 ///////////////////////////
-                templates = ['brand-header', 'brand-footer', 'nav-bar', 'run-status', 'daq-monitor'];
+                templates = ['brand-header', 'brand-footer', 'nav-bar', 'run-status', 'daq-monitor', 'CollectorLinksReportTable'];
                 dataStore.templates = prepareTemplates(templates);
 
                 //inject templates
@@ -126,8 +127,16 @@
                     }
                 );
 
-                // Inject the buttons to switch between DAQ subpages (Digitzers and Collectors)
+            // table has to be done as a separate template, since templates and tables don't play too nice together
+            document.getElementById('collectorLinksTable').innerHTML= Mustache.to_html(
+                dataStore.templates.CollectorLinksReportTable, 
+                {
+                    'id': 'CollectorLinksTable', 
+                    'links': ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f']
+                }
+            );
 
+                // Inject the buttons to switch between DAQ subpages (Digitzers and Collectors)
         // Create menu buttons
         var wrap = document.getElementById('daq-subpage-controls');
     for(i=0; i<buttonNames.length; i++){

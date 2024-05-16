@@ -193,6 +193,7 @@ function regenerateDatastructure(suppressDOMconfig){
         first = true;
         for(i=0; i<dataStore.ODB.DAQ.summary.collectors.titles.length; i++){
             if(dataStore.ODB.DAQ.summary.collectors.titles[i]){
+                // create the collector Picker buttons for the Digitizer subpage histogram selection
                 collectorOption = document.createElement('button');
                 collectorOption.setAttribute('type', 'button');
                 collectorOption.setAttribute('class', 'btn btn-default');
@@ -205,6 +206,21 @@ function regenerateDatastructure(suppressDOMconfig){
                 collectorOption.innerHTML = dataStore.ODB.DAQ.summary.collectors.titles[i];
                 document.getElementById('collectorPickerDig').appendChild(collectorOption);
 
+        
+                // create the collector Picker buttons for the Collector subpage links table and histogram selection
+                collectorOption = document.createElement('button');
+                collectorOption.setAttribute('type', 'button');
+                collectorOption.setAttribute('class', 'btn btn-default');
+                collectorOption.setAttribute('value', dataStore.ODB.DAQ.summary.collectors.titles[i].slice(2,3));
+                collectorOption.onclick = function(){
+                    activeButton('collectorPickerCol', this);
+                    dataStore.collectorLinksValue = this.value
+                    repaint();
+                }.bind(collectorOption);
+                collectorOption.innerHTML = dataStore.ODB.DAQ.summary.collectors.titles[i];
+                document.getElementById('collectorPickerCol').appendChild(collectorOption);
+
+                // create the digitizer Picker buttons for the Digitizer subpage histogram selection
                 digiCollectorOption = collectorOption.cloneNode(true);
                 digiCollectorOption.onclick = function(){
                     activeButton('digiCollectorPickerDig', this);
@@ -217,14 +233,15 @@ function regenerateDatastructure(suppressDOMconfig){
                 //start with the first collector selected on both collector and digitizer plots
                 if(first){
                     dataStore.collectorValue = collectorOption.value;
+                    dataStore.collectorLinksValue = collectorOption.value;
                     dataStore.digiCollectorValue = collectorOption.value;
                     updateDigitizerList("digiCollectorPickerDig"); 
                     activeButton('collectorPickerDig', collectorOption);
+                    activeButton('collectorPickerCol', collectorOption);
                     activeButton('digiCollectorPickerDig', digiCollectorOption);
                     first = false;
                 }
 
-		
 		// Create the Collector channel mask buttons
 		if(i<8){
                 CollectorChanMaskRow = document.createElement('div');
@@ -671,6 +688,7 @@ function findADC(channel){
 
 function repaint(){
     var collectorFigureIndex = parseInt(dataStore.collectorValue, 16),
+        collectorLinksFigureIndex = parseInt(dataStore.collectorLinksValue, 16),
         digiCollectorIndex = parseInt(dataStore.digiCollectorValue, 16),
         digitizerFigureIndex = parseInt(dataStore.digitizerValue, 16),
 	address, channelName, ADC, url;
@@ -696,6 +714,18 @@ function repaint(){
         dataStore.ODB.DAQ.summary.digitizers.accepts[collectorFigureIndex], 
         'Collector ' + dataStore.ODB.DAQ.summary.collectors.titles[collectorFigureIndex] + ' Channels', 'Digitizer', 'Hz'
     );
+
+    //Collectors Links plot on Collectors subpage
+    createLinksBarchart(
+        'collectorLinksHisto', 
+        dataStore.ODB.DAQ.summary.digitizers.titles[collectorLinksFigureIndex], 
+        dataStore.ODB.DAQ.summary.digitizers.requests[collectorLinksFigureIndex], 
+        dataStore.ODB.DAQ.summary.digitizers.accepts[collectorLinksFigureIndex], 
+        'Collector ' + dataStore.ODB.DAQ.summary.collectors.titles[collectorLinksFigureIndex] + ' Channels', 'Digitizer', 'Hz'
+    );
+
+    //Collector Links table on Collectors subpage
+    populateCollectorLinkTable(collectorLinksFigureIndex);
 
 	// Rishita -------------------------------------------------------------------
 		address = dataStore.ODB.DAQ.summary.digitizers.titles[digiCollectorIndex][digitizerFigureIndex];
@@ -808,6 +838,8 @@ if(dataStore.ODB.DAQ){
 //NOTE each of words 1-4 contain a pair of 16bit values
 //
 //late => event received on grifc more than 160us after being produced
+
+    // Sort the Primary collector Link values
     FilterInputLinkRate = [];
     FilterInputLinkUsage = [];
     FilterInputBufferUsage = [];
@@ -983,6 +1015,82 @@ function createFilterBarchart(targetDiv, labels, usage, plotTitle, xTitle, yTitl
     //collectors
     Plotly.newPlot(targetDiv, [use], layout);
 }
+
+function createLinksBarchart(targetDiv, PSClabels, requests, accepts, plotTitle, xTitle, yTitle){
+    // re-create the specified histogram
+
+    var layout = {
+            barmode: 'group',
+            title: plotTitle,
+            xaxis: {
+                title: xTitle,
+                ticktext: PSClabels
+            },
+            yaxis: {
+                title: yTitle
+            }
+        },
+        req = {
+          x: PSClabels,
+          y: requests,
+          name: 'Requests',
+          type: 'bar',
+
+        },
+        acpt = {
+          x: PSClabels,
+          y: accepts,
+          name: 'Accepts',
+          type: 'bar'
+        };
+
+    //collectors
+    Plotly.newPlot(targetDiv, [req, acpt], layout);
+}
+
+    function populateCollectorLinkTable(collectorLinksFigureIndex){
+        // function to populate the Link data into the Table for the selected collector
+//    The link status odb entries each contain a block of 12 words per link[16 of] for 192 words total, the 12 words are ...
+//
+//0:event_count  - events sent out of the link receive buffer
+//1:link_usage[hi] 2:link_usage[lo] - link idle histogram
+//3:buf_usage[hi]  4:buf_usage[lo]  - link buffer use histogram
+//5:good fragment count - received on the link
+//6:frag_late           -
+//7:frag:err            - format error in event-fragment
+//8:ev_pkts 9:ptr_pkts 10:par_pkts     [packets are 64bits]
+//11:link_errors                      [per clock]
+//
+//NOTE each of words 1-4 contain a pair of 16bit values
+//
+//late => event received on grifc more than 160us after being produced
+
+var wrap = 'CollectorLinksTable';
+var thisCol = 'collector0x'+collectorLinksFigureIndex;
+var ColKey = 'link_status'+collectorLinksFigureIndex;
+var numWordsPerLink = 12;
+var packetSize = 92; // 92 bits per packet
+
+for(var i=0; i<16; i++){
+        var ADC='empty';
+        if(dataStore.ODB.DAQ.hosts[thisCol].digitizers[i] && dataStore.ODB.DAQ.hosts[thisCol].digitizers[i].length>0){ ADC = 'adc'+dataStore.ODB.DAQ.hosts[thisCol].digitizers[i].match(/\d+/)[0]; }
+var ADCindex = i*numWordsPerLink;
+
+            document.getElementById(wrap+i.toString(16)+'ADC').innerHTML = ADC;
+            document.getElementById(wrap+i.toString(16)+'Port').innerHTML = '0x'+i.toString(16);
+            document.getElementById(wrap+i.toString(16)+'Data').innerHTML = prettyFileSizeString(Math.floor((dataStore.GRIFC[ColKey][ADCindex+8]*packetSize)/80))+'/s';
+            document.getElementById(wrap+i.toString(16)+'EventCount').innerHTML = dataStore.GRIFC[ColKey][ADCindex+0];
+            document.getElementById(wrap+i.toString(16)+'GoodCount').innerHTML = dataStore.GRIFC[ColKey][ADCindex+5];
+            document.getElementById(wrap+i.toString(16)+'LateCount').innerHTML = dataStore.GRIFC[ColKey][ADCindex+6];
+            document.getElementById(wrap+i.toString(16)+'FormatErrorCount').innerHTML = dataStore.GRIFC[ColKey][ADCindex+7];
+            document.getElementById(wrap+i.toString(16)+'LinkErrorCount').innerHTML = dataStore.GRIFC[ColKey][ADCindex+11];
+            document.getElementById(wrap+i.toString(16)+'evtPkts').innerHTML = dataStore.GRIFC[ColKey][ADCindex+8];
+            document.getElementById(wrap+i.toString(16)+'ptrPkts').innerHTML = dataStore.GRIFC[ColKey][ADCindex+9];
+            document.getElementById(wrap+i.toString(16)+'parPkts').innerHTML = dataStore.GRIFC[ColKey][ADCindex+10];
+        }
+
+    };
+
 
 // Function to return a color to represent a scale between 0.0 and 1.0
 // Input number must be between 0.0 and 1.0
@@ -1318,6 +1426,38 @@ function menuButtonClick(thisID){
 }
 
 
+
+function prettyFileSizeString(bytes){
+    // returns a string for filesize in bytes, kB, MB, GB or TBs
+    var string;
+    var sizeOfTB = 1000000000000;
+    var sizeOfGB = 1000000000;
+    var sizeOfMB = 1000000;
+    var sizeOfkB = 1000;
+    var sizeOfB = 1;
+    if(bytes>sizeOfTB){
+    // Terrabytes
+    string = (bytes / sizeOfTB).toFixed(2) + ' TB';
+    }
+    if(bytes>sizeOfGB){
+    // Terrabytes
+    string = (bytes / sizeOfGB).toFixed(2) + ' GB';
+    }
+    else if(bytes>sizeOfMB){
+    // Megabytes
+    string = (bytes / sizeOfMB).toFixed(1) + ' MB';
+    }
+    else if(bytes>sizeOfkB){
+    // kilobytes
+    string = (bytes / sizeOfkB).toFixed(0) + ' kB';
+    }
+    else{
+    // bytes
+    string = bytes + ' bytes';
+    }
+    
+    return string;
+}
 
 
 
