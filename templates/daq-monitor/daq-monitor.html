@@ -2,7 +2,7 @@
 <script src='daq-monitor.js' type="text/javascript"></script>
 
 <template id='daq-monitor'>
-	
+
     <div class='section-wrapper'>
         <div class='col-md-12 pan'>
             <div id='daq-subpage-controls'></div>
@@ -55,7 +55,7 @@
             <div id='CollectorChanADCLinks' class="btn-group" role="group"></div>
         </div>
     </div>
-    
+
     </div>
 
     <div class='section-wrapper hidden' id='daq-collectors-wrapper'>
@@ -69,44 +69,36 @@
             <div id='CollectorChanMaskPicker' class="btn-group" role="group"></div>
         </div>
     </div>
-	
-    <div class='section-wrapper'>
-        <div class='col-md-12 pan' id='masterStats'>
-            <h2>Filter Stats</h2>
-            <div id='FilterDisplay' class='FilterFrame'></div>
-        <div id='FilterHistoFrame' class='FilterFrame' text-align='left'>
-            <div id='FilterTable'></div>
-            <div id='FilterHisto'></div>
-            </div>
-        </div>
-    </div>
 
     <div class='section-wrapper'>
         <div class='col-md-12 pan' id='collectorStats'>
             <h2>Collector Links</h2>
-            <label for='collectorPickerCol'>Collector: </label>
-            <div id='collectorPickerCol' class="btn-group" role="group"></div>
-            <div id='collectorLinksHisto'></div>
+	          <div id='collectorPickerColDiv'>
+               <label for='collectorPickerCol'>Collector: </label>
+               <div id='collectorPickerCol' class="btn-group" role="group"></div>
+					  </div>
+	          <div id='collectorPickerTypeDiv'>
+	            <label for='collectorPickerType'>Display as:</label>
+	            <select id='collectorPickerType'></select>
+						</div>
             <div id='collectorLinksTableWrap'>
               <table id='collectorLinksTable' class='table'></table>
             </div>
-            </div>
+            <div id='collectorLinksHisto'></div>
         </div>
     </div>
 
+		    <div class='section-wrapper'>
+		        <div class='col-md-12 pan' id='masterStats'>
+		            <h2>Filter Stats</h2>
+		            <div id='FilterDisplay' class='FilterFrame'></div>
+		        <div id='FilterHistoFrame' class='FilterFrame' text-align='left'>
+		            <div id='FilterTable'></div>
+		            <div id='FilterHisto'></div>
+		            </div>
+		        </div>
+		    </div>
+
     </div>
-    
+
 </template>
-
-
-
-
-
-
-
-
-
-
-
-
-

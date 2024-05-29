@@ -5,21 +5,22 @@ dataStore = {
     "SOHhost": 'missing-hostname',
     "ODB": {},                              // place to park info pulled from ODB
     "GRIFC": {},                            // place for the GRIFC Filter and Link info
+    "lastGRIFC": {},                        // place for previous GRIFC Filter and Link info to calculate rates
     "data": {},                             // place to park raw data from non-ODB sources; note this gets dumped at the start of every heartbeat!
-    "detector": {                           // place to park detector-specific data 
+    "detector": {                           // place to park detector-specific data
         "subview": null,                    // current subview on display
         "subviewUnits": {
-            'HV': 'V', 
+            'HV': 'V',
             'HV_demand': 'V',
-            'threshold': 'ADC Units', 
-            'trigger_request': 'Hz', 
+            'threshold': 'ADC Units',
+            'trigger_request': 'Hz',
             'trigger_accept': 'Hz'
         },
         "subviewPrettyText": {
             'HV': 'HV (measured)',
             'HV_demand': 'HV (demand)',
-            'threshold': 'Threshold', 
-            'trigger_request': 'Trigger Request', 
+            'threshold': 'Threshold',
+            'trigger_request': 'Trigger Request',
             'trigger_accept': 'Trigger Accept'
         },
         "plotScales": {                   // defaults, feel free to update later
@@ -48,14 +49,14 @@ dataStore = {
                 'color': 'blue'
             },
         },
-        "cellCoords": {},                   //object with keys == cell names, values == arrays of vertex coordinates for that cell [x0, y0, x1, y1, ....] 
+        "cellCoords": {},                   //object with keys == cell names, values == arrays of vertex coordinates for that cell [x0, y0, x1, y1, ....]
         "cells": {}                         //object keyed by nomenclature code, values == corresponding qdshape objects
-    },     
+    },
     "heartbeat": {                          // queries and callbacks for the periodic data poll
         "URLqueries": [],                   // elements == ['url string', 'response type string', callback]; response type can be 'arraybuffer' or 'json'
         "scriptQueries": [],
         "ADCrequest": []                    // same format as URL queries.
-    },                        
+    },
     "nMessages": 5,                         // number of ODB messages to list in the status sidebar
     "frameColor": '#000000',                // outline color for visualizations
     "frameTextColor": '#DDDDDD',            // text color for in-figure text
@@ -104,7 +105,7 @@ dataStore = {
             "id": '00',
             "short": 'GRGa',
             "full": 'Ge',
-            "description": 'GRIFFIN Core A'   
+            "description": 'GRIFFIN Core A'
         },
         {
             "id": '01',
@@ -186,11 +187,11 @@ dataStore = {
         }
 	],
 	"tigress": [
-	{                                  
+	{
             "id": '00',
             "short": 'TIGa',
             "full": 'Ge',
-            "description": 'TIGRESS Core A'   
+            "description": 'TIGRESS Core A'
         },
         {
             "id": '01',
@@ -274,7 +275,7 @@ dataStore = {
 
     "ADCparameters": [
         {
-            "key": "a_enable", 
+            "key": "a_enable",
             "label": "ADC enabled",
             "scale": "lin",
             "min":0,
@@ -283,7 +284,7 @@ dataStore = {
             "unit": "bool"
         },
         {
-            "key": "a_pol", 
+            "key": "a_pol",
             "label": "Polarity",
             "scale": "lin",
             "min":0,
@@ -292,7 +293,7 @@ dataStore = {
             "unit": "+-"
         },
         {
-            "key": "a_fgain", 
+            "key": "a_fgain",
             "label": "ADC gain",
             "scale": "lin",
             "min":1,
@@ -310,7 +311,7 @@ dataStore = {
         //     "color": "blue"
         // },
         {
-            "key": "a_dcofst", 
+            "key": "a_dcofst",
             "label": "DC offset",
             "scale": "lin",
             "min":0,
@@ -319,7 +320,7 @@ dataStore = {
             "unit": "mV"
         },
         {
-            "key": "t_on", 
+            "key": "t_on",
             "label": "Triggering enabled",
             "scale": "lin",
             "min":0,
@@ -328,7 +329,7 @@ dataStore = {
             "unit": "bool"
         },
         {
-            "key": "t_thres", 
+            "key": "t_thres",
             "label": "Trigger threshold",
             "scale": "lin",
             "min":0,
@@ -337,7 +338,7 @@ dataStore = {
             "unit": "mV"
         },
         {
-            "key": "t_diff", 
+            "key": "t_diff",
             "label": "Trigger differentiation",
             "scale": "lin",
             "min":0,
@@ -346,7 +347,7 @@ dataStore = {
             "unit": "ns"
         },
         {
-            "key": "t_int", 
+            "key": "t_int",
             "label": "Trigger integration",
             "scale": "lin",
             "min":0,
@@ -355,7 +356,7 @@ dataStore = {
             "unit": "ns"
         },
         {
-            "key": "p_int", 
+            "key": "p_int",
             "label": "Pulse height integration",
             "scale": "lin",
             "min":0,
@@ -364,7 +365,7 @@ dataStore = {
             "unit": "ns"
         },
         {
-            "key": "p_diff", 
+            "key": "p_diff",
             "label": "Pulse height differentiation",
             "scale": "lin",
             "min":0,
@@ -373,7 +374,7 @@ dataStore = {
             "unit": "ns"
         },
         {
-            "key": "p_delay", 
+            "key": "p_delay",
             "label": "Pulse height delay",
             "scale": "lin",
             "min":0,
@@ -382,7 +383,7 @@ dataStore = {
             "unit": "ns"
         },
         {
-            "key": "p_polec1", 
+            "key": "p_polec1",
             "label": "Pulse height pole correction",
             "scale": "lin",
             "min":0,
@@ -390,7 +391,7 @@ dataStore = {
             "color": "blue"
         },
         {
-            "key": "wfr_smpl", 
+            "key": "wfr_smpl",
             "label": "Waveform samples",
             "scale": "lin",
             "min":0,
@@ -398,7 +399,7 @@ dataStore = {
             "color": "blue"
         },
         {
-            "key": "wfr_pret", 
+            "key": "wfr_pret",
             "label": "Waveform pretrigger",
             "scale": "lin",
             "min":0,
@@ -406,7 +407,7 @@ dataStore = {
             "color": "blue"
         },
         {
-            "key": "wfr_mode", 
+            "key": "wfr_mode",
             "label": "Waveform mode",
             "scale": "lin",
             "min":0,
@@ -415,7 +416,7 @@ dataStore = {
             "unit": "categorical, click on cell for details"
         },
         {
-            "key": "sim_ena", 
+            "key": "sim_ena",
             "label": "Simulation enabled",
             "scale": "lin",
             "min":0,
@@ -424,7 +425,7 @@ dataStore = {
             "unit": "bool"
         },
         {
-            "key": "sim_enat", 
+            "key": "sim_enat",
             "label": "Simulation trigger enabled",
             "scale": "lin",
             "min":0,
@@ -433,7 +434,7 @@ dataStore = {
             "unit": "bool"
         },
         {
-            "key": "sim_enar", 
+            "key": "sim_enar",
             "label": "Simulation random enabled",
             "scale": "lin",
             "min":0,
@@ -442,7 +443,7 @@ dataStore = {
             "unit": "bool"
         },
         {
-            "key": "sim_pol", 
+            "key": "sim_pol",
             "label": "Simulation polarity",
             "scale": "lin",
             "min":0,
@@ -451,7 +452,7 @@ dataStore = {
             "unit": "+-"
         },
         {
-            "key": "sim_rise", 
+            "key": "sim_rise",
             "label": "Simulation rise time",
             "scale": "lin",
             "min":0,
@@ -460,7 +461,7 @@ dataStore = {
             "unit": "ns"
         },
         {
-            "key": "sim_amp", 
+            "key": "sim_amp",
             "label": "Simulation amplitude",
             "scale": "lin",
             "min":0,
@@ -469,7 +470,7 @@ dataStore = {
             "unit": "mV"
         },
         {
-            "key": "sim_rate", 
+            "key": "sim_rate",
             "label": "Simulation rate",
             "scale": "lin",
             "min":0,
@@ -478,7 +479,7 @@ dataStore = {
             "unit": "Hz"
         },
         {
-            "key": "sim_cyc", 
+            "key": "sim_cyc",
             "label": "Simulation cycle waveform",
             "scale": "lin",
             "min":0,
@@ -487,7 +488,7 @@ dataStore = {
             "unit": "bool"
         },
         {
-            "key": "sim_dly0", 
+            "key": "sim_dly0",
             "label": "Simulation delay 0",
             "scale": "lin",
             "min":0,
@@ -496,7 +497,7 @@ dataStore = {
             "unit": "ns"
         },
         {
-            "key":"sim_dly1", 
+            "key":"sim_dly1",
             "label": "Simulation delay 1",
             "scale": "lin",
             "min":0,
@@ -505,7 +506,7 @@ dataStore = {
             "unit": "ns"
         },
         {
-            "key": "sim_dly2", 
+            "key": "sim_dly2",
             "label": "Simulation delay 2",
             "scale": "lin",
             "min":0,
@@ -514,7 +515,7 @@ dataStore = {
             "unit": "ns"
         },
         {
-            "key": "sim_dly3", 
+            "key": "sim_dly3",
             "label": "Simulation delay 3",
             "scale": "lin",
             "min":0,
@@ -523,7 +524,7 @@ dataStore = {
             "unit": "ns"
         },
         {
-            "key": "sim_amp0", 
+            "key": "sim_amp0",
             "label": "Simulation amplitude 0",
             "scale": "lin",
             "min":0,
@@ -532,7 +533,7 @@ dataStore = {
             "unit": "mV"
         },
         {
-            "key": "sim_amp1", 
+            "key": "sim_amp1",
             "label": "Simulation amplitude 1",
             "scale": "lin",
             "min":0,
@@ -541,7 +542,7 @@ dataStore = {
             "unit": "mV"
         },
         {
-            "key": "sim_amp2", 
+            "key": "sim_amp2",
             "label": "Simulation amplitude 2",
             "scale": "lin",
             "min":0,
@@ -550,7 +551,7 @@ dataStore = {
             "unit": "mV"
         },
         {
-            "key": "sim_amp3", 
+            "key": "sim_amp3",
             "label": "Simulation amplitude 3",
             "scale": "lin",
             "min":0,
@@ -560,7 +561,7 @@ dataStore = {
         },
         // looks like timestamps / walltimes
         // {
-        //     "key": "dtsclr_b", 
+        //     "key": "dtsclr_b",
         //     "label": "Deadtime readout",
         //     "scale": "lin",
         //     "min":0,
@@ -568,7 +569,7 @@ dataStore = {
         //     "color": "blue"
         // },
         // {
-        //     "key": "trsclr_b", 
+        //     "key": "trsclr_b",
         //     "label": "Trigger readout",
         //     "scale": "lin",
         //     "min":0,
@@ -576,7 +577,7 @@ dataStore = {
         //     "color": "blue"
         // },
         {
-            "key": "cfd_dly", 
+            "key": "cfd_dly",
             "label": "CFD delay",
             "scale": "lin",
             "min":0,
@@ -619,7 +620,7 @@ dataStore = {
         // },
         // not settings
         // {
-        //     "key": "rt_acpt", 
+        //     "key": "rt_acpt",
         //     "label": "Trigger accept rate",
         //     "scale": "lin",
         //     "min":0,
@@ -627,7 +628,7 @@ dataStore = {
         //     "color": "blue"
         // },
         // {
-        //     "key": "rt_rqst", 
+        //     "key": "rt_rqst",
         //     "label": "Trigger request rate",
         //     "scale": "lin",
         //     "min":0,
@@ -635,7 +636,7 @@ dataStore = {
         //     "color": "blue"
         // },
         // {
-        //     "key": "rt_dwav", 
+        //     "key": "rt_dwav",
         //     "label": "Dropped waveform",
         //     "scale": "lin",
         //     "min":0,
@@ -643,7 +644,7 @@ dataStore = {
         //     "color": "blue"
         // },
         // {
-        //     "key": "rt_dbsy", 
+        //     "key": "rt_dbsy",
         //     "label": "Dropped busy",
         //     "scale": "lin",
         //     "min":0,
@@ -651,7 +652,7 @@ dataStore = {
         //     "color": "blue"
         // },
         // {
-        //     "key": "rt_dqt", 
+        //     "key": "rt_dqt",
         //     "label": "Dropped QT",
         //     "scale": "lin",
         //     "min":0,
@@ -659,7 +660,7 @@ dataStore = {
         //     "color": "blue"
         // },
         // {
-        //     "key": "rt_dtrg", 
+        //     "key": "rt_dtrg",
         //     "label": "Dropped trigger",
         //     "scale": "lin",
         //     "min":0,
@@ -667,7 +668,7 @@ dataStore = {
         //     "color": "blue"
         // },
         // {
-        //     "key": "rt_dded", 
+        //     "key": "rt_dded",
         //     "label": "Dropped deadtime",
         //     "scale": "lin",
         //     "min":0,
@@ -675,7 +676,7 @@ dataStore = {
         //     "color": "blue"
         // },
         // {
-        //     "key": "st_trig", 
+        //     "key": "st_trig",
         //     "label": "Trigger count",
         //     "scale": "lin",
         //     "min":0,
@@ -683,7 +684,7 @@ dataStore = {
         //     "color": "blue"
         // },
         // {
-        //     "key": "st_trigr", 
+        //     "key": "st_trigr",
         //     "label": "Trigger request count",
         //     "scale": "lin",
         //     "min":0,
@@ -691,7 +692,7 @@ dataStore = {
         //     "color": "blue"
         // },
         // {
-        //     "key": "st_btrig", 
+        //     "key": "st_btrig",
         //     "label": "Trigger buffer fill level",
         //     "scale": "lin",
         //     "min":0,
@@ -699,7 +700,7 @@ dataStore = {
         //     "color": "blue"
         // },
         // {
-        //     "key": "st_bwv", 
+        //     "key": "st_bwv",
         //     "label": "Waveform buffer fill level",
         //     "scale": "lin",
         //     "min":0,
@@ -707,7 +708,7 @@ dataStore = {
         //     "color": "blue"
         // },
         // {
-        //     "key": "st_bqt", 
+        //     "key": "st_bqt",
         //     "label": "QT buffer fill level",
         //     "scale": "lin",
         //     "min":0,
@@ -715,7 +716,7 @@ dataStore = {
         //     "color": "blue"
         // },
         // {
-        //     "key": "st_bevr", 
+        //     "key": "st_bevr",
         //     "label": "Event buffer read",
         //     "scale": "lin",
         //     "min":0,
@@ -723,7 +724,7 @@ dataStore = {
         //     "color": "blue"
         // },
         // {
-        //     "key": "st_bevw", 
+        //     "key": "st_bevw",
         //     "label": "Event buffer write",
         //     "scale": "lin",
         //     "min":0,
@@ -731,7 +732,7 @@ dataStore = {
         //     "color": "blue"
         // },
         {
-            "key": "prg_ddtm", 
+            "key": "prg_ddtm",
             "label": "Prog deadtime",
             "scale": "lin",
             "min":0,
@@ -741,7 +742,7 @@ dataStore = {
         }//,
         // not set in templates / custom
         // {
-        //     "key": "det_type", 
+        //     "key": "det_type",
         //     "label": "Detector type",
         //     "scale": "lin",
         //     "min":0,
@@ -751,7 +752,7 @@ dataStore = {
         // },
         // timestamps / real time
         // {
-        //     "key": "syn_lvtm", 
+        //     "key": "syn_lvtm",
         //     "label": "Sync livetime",
         //     "scale": "lin",
         //     "min":0,
@@ -759,7 +760,7 @@ dataStore = {
         //     "color": "blue"
         // },
         // {
-        //     "key": "syn_ddtm", 
+        //     "key": "syn_ddtm",
         //     "label": "Sync deadtime",
         //     "scale": "lin",
         //     "min":0,
@@ -798,9 +799,9 @@ dataStore = {
 
 // Grab the hostname from the URL
 if(dataStore.host=="missing-hostname"){
-    
+
    var urlData = parseQuery();
-    
+
     if(urlData.backend=="griffin")
     {
 	dataStore.hostname = 'griffin';

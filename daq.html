@@ -49,31 +49,32 @@
                     'SE': 'SCEPTAR',
 	            'AR': 'ARIES',
                     'DS': 'DESCANT',
-                    'PA': 'PACES', 
+                    'PA': 'PACES',
 	            'LB': 'LaBr3',
                 'OG': 'OGS',
                 'RC': 'RCMP',
 	            'XX': 'Empty CSA',
 	            'TI': 'TIGRESS',
-	            'SI': 'Silicon', 
-	            'CS': 'CsI',  
+	            'SI': 'Silicon',
+	            'CS': 'CsI',
 	            'TP': 'TIP CsI',
 	            'SP': 'SPICE',
-            	    'Ga': 'Gas Detector',  
-	            'TR': 'TRIFoil',  
-	            'SS': 'SSB', 
-	            'EM': 'EMMA End Station', 
+            	    'Ga': 'Gas Detector',
+	            'TR': 'TRIFoil',
+	            'SS': 'SSB',
+	            'EM': 'EMMA End Station',
 	            'ET': 'EMMA Target Chamber',
 	            'RF': 'RF'
 	        };
                 determineADCrequests();
                 detectDetectors();
             }
-     
+
 	  function processGRIFC(payload){
-	       dataStore.GRIFC = payload;
+   	      // dataStore.lastGRIFC = payload;
+     	   dataStore.GRIFC = payload;
 	    }
-	
+
             window.addEventListener('HTMLImportsLoaded', function(e) {
                 validate_browser();
 
@@ -82,7 +83,7 @@
                 ///////////////
                 //get the ODB DAQ dir and set up adc requests:
 	        promiseScript('http://' + dataStore.host + '/?cmd=jcopy&odb=/DAQ&encoding=json-p-nokeys&callback=processDAQ');
-	
+
                 ///////////////////////////
                 //handle templates
                 ///////////////////////////
@@ -92,36 +93,36 @@
                 //inject templates
                 //header
                 document.getElementById('header').innerHTML = Mustache.to_html(
-                    dataStore.templates['brand-header'], 
+                    dataStore.templates['brand-header'],
                     {
                         'title': dataStore.hostname.toUpperCase()+' DAQ',
                     }
-                ); 
+                );
                 //footer
                 document.getElementById('footer').innerHTML = Mustache.to_html(
-                    dataStore.templates['brand-footer'], 
+                    dataStore.templates['brand-footer'],
                     {
-                        
+
                     }
                 );
                 setupFooter('footerImage', 2, '#999999');
                 //nav
                 document.getElementById('nav').innerHTML = Mustache.to_html(
-                    dataStore.templates['nav-bar'], 
+                    dataStore.templates['nav-bar'],
                     {
-                        
+
                     }
                 );
                 //run control
                 document.getElementById('runStat').innerHTML = Mustache.to_html(
-                    dataStore.templates['run-status'], 
+                    dataStore.templates['run-status'],
                     {
 
                     }
                 );
                 //daq
                 document.getElementById('DAQDisplay').innerHTML = Mustache.to_html(
-                    dataStore.templates['daq-monitor'], 
+                    dataStore.templates['daq-monitor'],
                     {
 
                     }
@@ -129,9 +130,9 @@
 
             // table has to be done as a separate template, since templates and tables don't play too nice together
             document.getElementById('collectorLinksTable').innerHTML= Mustache.to_html(
-                dataStore.templates.CollectorLinksReportTable, 
+                dataStore.templates.CollectorLinksReportTable,
                 {
-                    'id': 'CollectorLinksTable', 
+                    'id': 'CollectorLinksTable',
                     'links': ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f']
                 }
             );
@@ -140,8 +141,8 @@
         // Create menu buttons
         var wrap = document.getElementById('daq-subpage-controls');
     for(i=0; i<buttonNames.length; i++){
-                newButton = document.createElement('a'); 
-                newButton.setAttribute('id', buttonIDs[i]); 
+                newButton = document.createElement('a');
+                newButton.setAttribute('id', buttonIDs[i]);
                 newButton.setAttribute('class', 'btn btn-info btn-lg');
                 newButton.innerHTML = buttonNames[i];
                 newButton.onclick = function(){
@@ -151,7 +152,7 @@
       }
       // Start with the Digitizers subpgae displayed
       document.getElementById(buttonIDs[1]).click();
-                 
+
 	        if(dataStore.hostname=='tigress'){ document.getElementById('Logo').src = 'img/TIGRESS-logo.png';}
 
                 ////////////////////////////
@@ -160,9 +161,9 @@
                 dataStore.heartbeat.scriptQueries = [dataStore.runSummaryQuery,dataStore.GRIFCQuery]
                 dataStore.heartbeat.callback = dataUpdate
 	        heartbeat();
-	
+
             });
-             
+
 
         </script>
 
