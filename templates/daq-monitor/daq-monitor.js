@@ -196,7 +196,8 @@ function regenerateDatastructure(suppressDOMconfig){
         collectorOption.setAttribute('value', 'M');
         collectorOption.onclick = function(){
           activeButton('collectorPickerCol', this);
-          dataStore.collectorLinksValue = this.value
+          dataStore.collectorLinksValue = this.value;
+          populateCollectorLinkTable(this.value,true);
           repaint();
         }.bind(collectorOption);
         collectorOption.innerHTML = 'Primary';
@@ -211,8 +212,11 @@ function regenerateDatastructure(suppressDOMconfig){
             opt.innerHTML = selectOptions[thisOption][1];
             select.appendChild(opt);
         }
-        // Add the onclick listener for the collector Picker Type select (display rates or totals)
-        select.addEventListener("change", populateCollectorLinkTable);
+        // Add the onchange listener for the collector Picker Type select (display rates or totals)
+        select.onchange = function(){
+          populateCollectorLinkTable(dataStore.collectorLinksValue,true);
+          repaint();
+        };
 
     first = true;
     for(i=0; i<dataStore.ODB.DAQ.summary.collectors.titles.length; i++){
@@ -238,7 +242,8 @@ function regenerateDatastructure(suppressDOMconfig){
         collectorOption.setAttribute('value', dataStore.ODB.DAQ.summary.collectors.titles[i].slice(2,3));
         collectorOption.onclick = function(){
           activeButton('collectorPickerCol', this);
-          dataStore.collectorLinksValue = this.value
+          dataStore.collectorLinksValue = this.value;
+          populateCollectorLinkTable(this.value,true);
           repaint();
         }.bind(collectorOption);
         collectorOption.innerHTML = dataStore.ODB.DAQ.summary.collectors.titles[i];
@@ -749,7 +754,7 @@ function repaint(){
   );
 
   //Collector Links table on Collectors subpage
-  populateCollectorLinkTable(collectorLinksFigureIndex);
+  populateCollectorLinkTable(collectorLinksFigureIndex,false);
 
   // Rishita -------------------------------------------------------------------
   address = dataStore.ODB.DAQ.summary.digitizers.titles[digiCollectorIndex][digitizerFigureIndex];
@@ -1072,7 +1077,7 @@ function createLinksBarchart(targetDiv, PSClabels, requests, accepts, plotTitle,
   Plotly.newPlot(targetDiv, [req, acpt], layout);
 }
 
-function populateCollectorLinkTable(collectorLinksFigureIndex){
+function populateCollectorLinkTable(collectorLinksFigureIndex,displayNow){
   // function to populate the Link data into the Table for the selected collector
   //    The link status odb entries each contain a block of 12 words per link[16 of] for 192 words total, the 12 words are ...
   //
@@ -1157,7 +1162,7 @@ var thisEvtPkts = dataStore.GRIFC[ColKey][ADCindex+8];
 var thisPtrPkts = dataStore.GRIFC[ColKey][ADCindex+9];
 var thisParPkts = dataStore.GRIFC[ColKey][ADCindex+10];
 
-  if(dataStore.GRIFC['filter_status/last_written'] == dataStore.lastGRIFC['filter_status/last_written']){
+  if((dataStore.GRIFC['filter_status/last_written'] == dataStore.lastGRIFC['filter_status/last_written']) && !displayNow){
     //Do not update table values. ODB values only update every 10 seconds, but we fetch more often
     return;
   }
@@ -1209,6 +1214,7 @@ if(displayRates == 'Rates'){
   if(dataStore.GRIFC['filter_status/last_written'] > dataStore.lastGRIFC['filter_status/last_written'] || typeof(dataStore.lastGRIFC['filter_status/last_written']) == 'undefined'){
     dataStore.lastGRIFC = dataStore.GRIFC;
   }
+
 
 };
 
