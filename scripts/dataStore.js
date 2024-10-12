@@ -72,6 +72,7 @@ dataStore = {
         'ART': 'ARIES',
         'CSI': 'CsI',
         'DSC': 'DESCANT',
+        'DSW': 'DESCANT Wall',
         'EMT': 'EMMA Trigger',
         'LBL': 'LaBr3 Energy',
         'LBS': 'LaBr3 Shield',
